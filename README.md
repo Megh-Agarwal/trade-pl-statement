@@ -9,6 +9,8 @@ The system consists of a in depth PL table with real time market prices and pl v
 based on invested coins and the PLs of each over time. There are also quick stats letting you know the best
 coin you invested and the worst coin you invested. They are dependant on their current market value and the total cost
 
+Visit the following link for a demo of the application: https://trade-pl-statement.herokuapp.com/
+
 ### Basics of the application:
 #### Adding trades:
 The user can add their "buy" (the system currently only supports buy trades) trades for their respective cryptocoin. 
