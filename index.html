@@ -389,6 +389,16 @@
 
                     if(j == 0){
                       entireLabels[i] = getDatesInRange(date, currentDate);
+
+                      for(let tempDate in entireLabels[i]){
+                        if(!priceVsDate[entireLabels[i][tempDate]]){
+                          var index = entireLabels[i].indexOf(entireLabels[i][tempDate]);
+                          if (index !== -1) {
+                            entireLabels[i].splice(index, 1);
+                          }
+                        }
+                      }
+                    
                       for(let j in entireLabels[i]){
                         entireLabels[i][j] = entireLabels[i][j].split('-')[2] + " " + convertMonthToWord(entireLabels[i][j], 1, '-') + " " + entireLabels[i][j].split('-')[0];
                       }
