@@ -84,6 +84,7 @@
             <thead>
               <tr>
                 <th>Coin</th>
+                <th>Type</th>
                 <th>Traded Price</th>
                 <th>Volume</th>
                 <th>Cost</th>
@@ -122,6 +123,13 @@
               <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
             </div>
             <div class="form-group">
+              <label for="tradeType">Trade Type</label>
+              <select class="form-control" id="tradeType" aria-label="Trade Type">
+                <option value="buy" selected>Buy</option>
+                <option value="sell">Sell</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="price">Price</label>
               <input type="number" class="form-control" id="price">
             </div>
@@ -155,6 +163,13 @@
               <label for="investedCoin">Coin</label>
               <input disabled type="text" class="form-control typeahead" id="editInvestedCoin">
               <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
+            </div>
+            <div class="form-group">
+              <label for="tradeType">Trade Type</label>
+              <select disabled class="form-control" id="editTradeType" aria-label="Trade Type">
+                <option value="buy" selected>Buy</option>
+                <option value="sell">Sell</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="price">Price</label>
@@ -191,6 +206,11 @@
   <script>
     // execute/clear BS loaders for docs
     $(function(){while(window.BS&&window.BS.loader&&window.BS.loader.length){(window.BS.loader.pop())()}})
+
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     
     var coinsList = [];
     var coinsSymbols = [];
@@ -225,6 +245,7 @@
         `     
           <tr>
             <td>${tradeDetails.coin}</td>
+            <td>${capitalizeFirstLetter(tradeDetails.type)}</td>
             <td>$${tradeDetails.price}</td>
             <td>${tradeDetails.volume} ${tradeDetails.symbol}</td>
             <td>$${tradeDetails.cost}</td>
@@ -244,6 +265,7 @@
         let tradeDetails = JSON.parse(trades[i]);
         if(tradeDetails.id == id){
           $("#editInvestedCoin").val(tradeDetails.coin);
+          $("#editTradeType").val(tradeDetails.type);
           $("#editPrice").val(tradeDetails.price);
           $("#editVolume").val(tradeDetails.volume);
           $("#editTradeDate").val(tradeDetails.tradeDate);
@@ -265,6 +287,7 @@
 
     $("#editTradeButton").on('click', function(e){
       let coin = $("#editInvestedCoin").val();
+      let tradeType = $("#editTradeType").val();
       let price = $("#editPrice").val();
       let volume = $("#editVolume").val();
       let tradeDate = $("#editTradeDate").val();
@@ -331,6 +354,29 @@
         coinWiseTrades = JSON.parse(localStorage.coinWiseTrades);
       }
 
+      if(tradeType == "sell"){
+        if(!coinWiseTrades[coinSymbol]){
+          PNotify.error({
+            title: "An error occured",
+            text: `You have no holding for coin with symbol as ${coinSymbol} to sell ${volume} ${coinSymbol}.`
+          })
+          
+          return false;
+        }
+
+        let holdingOfCoin = JSON.parse(coinWiseTrades[coinSymbol]);
+        let currentVolumeHolding = parseFloat(holdingOfCoin.volume);
+
+        if(currentVolumeHolding < volume){
+          PNotify.error({
+            title: "An error occured",
+            text: `You have only ${currentVolumeHolding} ${coinSymbol} to sell.`
+          })
+          
+          return false;
+        }
+      }
+      
       for(let i = 0; i < trades.length; i++){
         let tradeDetails = JSON.parse(trades[i]);
         if(tradeDetails.id == $("#tradeId").val()){
@@ -347,11 +393,19 @@
       let totalCost = 0.00;
       let totalVolume = 0;
 
+      let totalSoldQty = 0;
+
       for(let i = 0; i < trades.length; i++){
         let tradeDetails = JSON.parse(trades[i]);
         if(tradeDetails.symbol == coinSymbol){
-          totalVolume = totalVolume + parseFloat(tradeDetails.volume);
-          totalCost = totalCost + parseFloat(tradeDetails.cost);
+          if(tradeDetails.type == "buy") {
+            totalVolume = totalVolume + parseFloat(tradeDetails.volume);
+            totalCost = totalCost + parseFloat(tradeDetails.cost);
+          }
+
+          if(tradeDetails.type == "sell") {
+            totalSoldQty = totalSoldQty + parseFloat(tradeDetails.volume);
+          }
         }
       }
 
@@ -360,8 +414,8 @@
       let tempVar =  {
         "symbol": coinSymbol,
         "price": avgPrice,
-        "volume": totalVolume,
-        "cost": totalCost,
+        "volume": totalVolume - totalSoldQty,
+        "cost": avgPrice * (totalVolume - totalSoldQty),
         "name": coinsSymbols[coinSymbol]["name"],
       };
 
@@ -385,6 +439,7 @@
 
     $("#addNewTradeButton").on('click', function(e){
       let coin = $("#investedCoin").val();
+      let tradeType = $("#tradeType").val();
       let price = $("#price").val();
       let volume = $("#volume").val();
       let tradeDate = $("#tradeDate").val();
@@ -393,6 +448,15 @@
         PNotify.error({
           title: "An error occured",
           text: "Found invested coin value as empty. Please enter the invested coin."
+        })
+        
+        return false;
+      }
+
+      if(tradeType == "" || (tradeType != "buy" && tradeType != "sell")){
+        PNotify.error({
+          title: "An error occured",
+          text: "Found invalid trade type. Please select a trade type."
         })
         
         return false;
@@ -451,9 +515,33 @@
         coinWiseTrades = JSON.parse(localStorage.coinWiseTrades);
       }
 
+      if(tradeType == "sell"){
+        if(!coinWiseTrades[coinSymbol]){
+          PNotify.error({
+            title: "An error occured",
+            text: `You have no holding for coin with symbol as ${coinSymbol} to sell ${volume} ${coinSymbol}.`
+          })
+          
+          return false;
+        }
+
+        let holdingOfCoin = JSON.parse(coinWiseTrades[coinSymbol]);
+        let currentVolumeHolding = parseFloat(holdingOfCoin.volume);
+
+        if(currentVolumeHolding < volume){
+          PNotify.error({
+            title: "An error occured",
+            text: `You have only ${currentVolumeHolding} ${coinSymbol} to sell.`
+          })
+          
+          return false;
+        }
+      }
+
       trades.push(JSON.stringify({
         "id": Date.now(),
         "symbol": coinSymbol,
+        "type": tradeType,
         "coin": coin,
         "price": price,
         "volume": volume,
@@ -467,11 +555,19 @@
       let totalCost = 0.00;
       let totalVolume = 0;
 
+      let totalSoldQty = 0;
+
       for(let i = 0; i < trades.length; i++){
         let tradeDetails = JSON.parse(trades[i]);
         if(tradeDetails.symbol == coinSymbol){
-          totalVolume = totalVolume + parseFloat(tradeDetails.volume);
-          totalCost = totalCost + parseFloat(tradeDetails.cost);
+          if(tradeDetails.type == "buy") {
+            totalVolume = totalVolume + parseFloat(tradeDetails.volume);
+            totalCost = totalCost + parseFloat(tradeDetails.cost);
+          }
+
+          if(tradeDetails.type == "sell") {
+            totalSoldQty = totalSoldQty + parseFloat(tradeDetails.volume);
+          }
         }
       }
 
@@ -480,8 +576,8 @@
       let tempVar =  {
         "symbol": coinSymbol,
         "price": avgPrice,
-        "volume": totalVolume,
-        "cost": totalCost,
+        "volume": totalVolume - totalSoldQty,
+        "cost": avgPrice * (totalVolume - totalSoldQty),
         "name": coinsSymbols[coinSymbol]["name"],
       };
 
