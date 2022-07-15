@@ -59,7 +59,7 @@
 
         const dates = [];
 
-        while (date <= endDate) {
+        while (date < endDate) {
           dates.push(formatDate(date));
           date.setDate(date.getDate() + 1);
         }
@@ -354,6 +354,8 @@
                   let existingVolume = 0;
                   let existingCost = 0;
 
+                  let avgPrice = 0;
+
                   let values = [];
 
                   for(let j in sortTrades[i]){
@@ -362,8 +364,15 @@
                     let tempVolume = parseFloat(tempTradeDs.volume);
                     let tempCost = parseFloat(tempTradeDs.cost);
 
-                    tempVolume += existingVolume;
-                    tempCost += existingCost;
+                    if(tempTradeDs.type == "buy"){
+                      tempVolume += existingVolume;
+                      tempCost += existingCost;
+
+                      avgPrice = tempCost / tempVolume;
+                    } else if(tempTradeDs.type == "sell"){
+                      tempVolume = existingVolume - tempVolume;
+                      tempCost = avgPrice * tempVolume;
+                    }
 
                     let currentDate = new Date();
                     let nextTradeDate = new Date();
@@ -400,8 +409,12 @@
                       )
                     }
 
-                    existingVolume += parseFloat(tempTradeDs.volume);
-                    existingCost += parseFloat(tempTradeDs.cost);
+                    if(tempTradeDs.type == "buy"){
+                      existingVolume += parseFloat(tempTradeDs.volume);
+                      existingCost += parseFloat(tempTradeDs.cost);
+                    } else if(tempTradeDs.type == "sell"){
+                      existingVolume = parseFloat(tempVolume);
+                    }
                   }
 
                   tempChartData[i].push(
@@ -412,7 +425,7 @@
                 }
               });
             }
-            
+          
           for(let i in tempChartData){
             $("#plBreakdownCoinWiseHeader").append(
               `
