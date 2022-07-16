@@ -1,8 +1,4 @@
-if(process.env.NODE_ENV !== 'production'){
-    require('dotenv').config();
-}
-
-const port = process.env.PORT || 5000;
+const port = 8080;
 
 const path = require('path');
 const express = require('express');
@@ -14,7 +10,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/routes.js');
 
 const publicVapidKey = "BI6jIHYbytCsLCBK-D38d6XfcUpoznzdEGAlMVbDu-LeGTjsI4N4T5SEEC9wl-jw6WFKsJ0h9FqYcFFvbGlso7g";
-const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+const privateVapidKey = "90FHdufXbiFkobrzlYgZ6pGAQEpaNk5o9Q_eOMbQJuk";
 
 const publicDirectory = path.join(__dirname, './public');
 const viewsPath = path.join(__dirname, './templates/views/');
