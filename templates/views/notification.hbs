@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{>head}}
+    <body>
+    <div class="container">
+        <div class="row">
+            {{>header}}
+            <div class="col-md-9 content">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">Notifications</h6>
+                        <h2 class="dashhead-title">Added notifications</h2>
+                    </div>
+                </div>
+
+                <div class="flextable table-actions">
+                    <div class="flextable-item flextable-primary">
+                        <div class="btn-toolbar-item input-with-icon">
+                            <input type="text" id="search" class="form-control input-block" placeholder="Search Trades">
+                            <span class="icon icon-magnifying-glass"></span>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" onclick="askNotificationPermission()" >
+                                <span class="icon icon-notification"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" data-toggle="modal" href="#addNewNotificationModal" >
+                                <span class="icon icon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Coin</th>
+                                <th>Type</th>
+                                <th>Option</th>
+                                <th>Condition</th>
+                                <th>Value</th>
+                                <th>Expiry</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notificationDetailsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    <nav>
+                        <ul class="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addNewNotificationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Add new notification</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="notificationCoin">Coin</label>
+                            <input type="text" class="form-control typeahead" id="notificationCoin">
+                            <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationType">Notification Type</label>
+                            <select class="form-control" id="notificationType" aria-label="Notification Type">
+                                <option value="price" selected>Price</option>
+                                <option value="total">Profit and Loss</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationOption">Notification Option</label>
+                            <select class="form-control" id="notificationOption" aria-label="Notification Option">
+                                <option value="once" selected>Only Once</option>
+                                <option value="everytime">Everytime the condition is fulfilled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationCondition">Notification Condition</label>
+                            <select class="form-control" id="notificationCondition" aria-label="Notification Condition">
+                                <option value="more" selected>More than equal to x</option>
+                                <option value="less">Less than equal to x</option>
+                                <option value="equal">Equal to x</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationExpiry">Notification Expiry</label>
+                            <input type="date" class="form-control" id="notificationExpiry">
+                        </div>
+                        <div class="form-group">
+                            <label for="notificationValue">Value (x)</label>
+                            <input type="number" class="form-control" id="notificationValue">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addNewNotificationButton">Add Notification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editNotificationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Edit Notification</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="editNotificationCoin">Coin</label>
+                            <input type="text" class="form-control typeahead" id="editNotificationCoin">
+                            <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNotificationType">Notification Type</label>
+                            <select class="form-control" id="editNotificationType" aria-label="Notification Type">
+                                <option value="price" selected>Price</option>
+                                <option value="total">Profit and Loss</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNotificationOption">Notification Option</label>
+                            <select class="form-control" id="editNotificationOption" aria-label="Notification Option">
+                                <option value="once" selected>Only Once</option>
+                                <option value="everytime">Everytime the condition is fulfilled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNotificationCondition">Notification Condition</label>
+                            <select class="form-control" id="editNotificationCondition" aria-label="Notification Condition">
+                                <option value="more" selected>More than equal to x</option>
+                                <option value="less">Less than equal to x</option>
+                                <option value="equal">Equal to x</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNotificationExpiry">Notification Expiry</label>
+                            <input type="date" class="form-control" id="editNotificationExpiry">
+                        </div>
+                        <div class="form-group">
+                            <label for="editNotificationValue">Value (x)</label>
+                            <input type="number" class="form-control" id="editNotificationValue">
+                        </div>
+                        <div class="form-group" hidden>
+                            <input type="text" disabled class="form-control" id="notificationId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editNotificationButton">Edit Notification</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteNotificationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Delete Notification</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this notification?</p>
+                    <span hidden id="deleteNotificationSpanId"></span>
+                    <button 
+                        type="button" 
+                        class="btn btn-primary" 
+                        id="deleteNotificationButton"
+                    >
+                        Delete Notification
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/tether.min.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/tablesorter.min.js"></script>
+    <script src="/js/toolkit.js"></script>
+    <script src="/js/application.js"></script>
+    <script src="/js/typeahead.js"></script>
+    <script src="/js/pnotify.min.js"></script>
+    <script src="/js/custom/notification.js"></script>
+    <script src="/js/custom/notification.show.js"></script>
+    </body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{>head}}
+    <body>
+    <div class="container">
+        <div class="row">
+            {{>header}}
+            <div class="col-md-9 content">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">Trades</h6>
+                        <h2 class="dashhead-title">Completed trades</h2>
+                    </div>
+                </div>
+
+                <div class="flextable table-actions">
+                    <div class="flextable-item flextable-primary">
+                        <div class="btn-toolbar-item input-with-icon">
+                            <input type="text" id="search" class="form-control input-block" placeholder="Search Trades">
+                            <span class="icon icon-magnifying-glass"></span>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" data-toggle="modal" href="#addNewTradeModal" >
+                                <span class="icon icon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th>Coin</th>
+                            <th>Type</th>
+                            <th>Traded Price</th>
+                            <th>Volume</th>
+                            <th>Cost</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tradeDetailsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    <nav>
+                        <ul class="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addNewTradeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Add new trade</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="investedCoin">Coin</label>
+                            <input type="text" class="form-control typeahead" id="investedCoin">
+                            <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="tradeType">Trade Type</label>
+                            <select class="form-control" id="tradeType" aria-label="Trade Type">
+                                <option value="buy" selected>Buy</option>
+                                <option value="sell">Sell</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" class="form-control" id="price">
+                        </div>
+                        <div class="form-group">
+                            <label for="volume">Volume</label>
+                            <input type="number" class="form-control" id="volume">
+                        </div>
+                        <div class="form-group">
+                            <label for="tradeDate">Trade Date</label>
+                            <input type="date" class="form-control" id="tradeDate">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="addNewTradeButton">Add trade</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editTradeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Edit Trade</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="investedCoin">Coin</label>
+                            <input disabled type="text" class="form-control typeahead" id="editInvestedCoin">
+                            <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="tradeType">Trade Type</label>
+                            <select disabled class="form-control" id="editTradeType" aria-label="Trade Type">
+                                <option value="buy" selected>Buy</option>
+                                <option value="sell">Sell</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" class="form-control" id="editPrice">
+                        </div>
+                        <div class="form-group">
+                            <label for="volume">Volume</label>
+                            <input type="number" class="form-control" id="editVolume">
+                        </div>
+                        <div class="form-group">
+                            <label for="tradeDate">Trade Date</label>
+                            <input type="date" class="form-control" id="editTradeDate">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" hidden class="form-control" id="tradeId">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editTradeButton">Edit trade</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/tether.min.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/tablesorter.min.js"></script>
+    <script src="/js/toolkit.js"></script>
+    <script src="/js/application.js"></script>
+    <script src="/js/typeahead.js"></script>
+    <script src="/js/pnotify.min.js"></script>
+    <script src="/js/custom/add.js"></script>
+    </body>
+</html>

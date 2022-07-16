@@ -1,0 +1,32 @@
+{
+  "name": "trade-pl-statement",
+  "version": "1.0.0",
+  "description": "An application for PL statement for investments completed in crypto world",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Megh-Agarwal/trade-pl-statement.git"
+  },
+  "author": "Megh Agarwal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Megh-Agarwal/trade-pl-statement/issues"
+  },
+  "homepage": "https://github.com/Megh-Agarwal/trade-pl-statement#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "hbs": "^4.2.0",
+    "helmet": "^5.1.0",
+    "nodemon": "^2.0.19",
+    "web-push": "^3.5.0"
+  },
+  "engines": {
+    "node": "16.15.0"
+  }
+}
