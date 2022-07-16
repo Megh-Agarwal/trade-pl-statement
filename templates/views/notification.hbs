@@ -1,63 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="keywords" content="">
-        <meta name="author" content="">
-
-        <title>
-        $ - Notifications
-        </title>
-
-        <link href="../assets/css/toolkit-inverse.css" rel="stylesheet">
-        <link href="../assets/css/application.css" rel="stylesheet">
-        <link href="../assets/css/typeahead.css" rel="stylesheet" />
-        <link href="../assets/css/pnotify.css" rel="stylesheet" />
-        <style>
-        /* note: this is a hack for ios iframe for bootstrap themes shopify page */
-        /* this chunk of css is not part of the toolkit :) */
-        body {
-            width: 1px;
-            min-width: 100%;
-            *width: 100%;
-        }
-        </style>
-    </head>
-
+    {{>head}}
     <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-3 sidebar">
-                <nav class="sidebar-nav">
-                    <div class="sidebar-header">
-                        <button class="nav-toggler nav-toggler-md sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-md">
-                            <span class="sr-only">Toggle nav</span>
-                        </button>
-                        <a class="sidebar-brand img-responsive" href="index.html">
-                            <span class="icon icon-credit sidebar-brand-icon"></span>
-                        </a>
-                    </div>
-
-                    <div class="collapse nav-toggleable-md" id="nav-toggleable-md">
-                        <ul class="nav nav-pills nav-stacked flex-column">
-                            <li class="nav-header">Dashboards</li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="../index.html">Overview</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="../add/index.html">Trades</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="../notification/index.html">Notifications</a>
-                            </li>
-                        </ul>
-                        <hr class="visible-xs mt-3">
-                    </div>
-                </nav>
-            </div>
+            {{>header}}
             <div class="col-md-9 content">
                 <div class="dashhead">
                     <div class="dashhead-titles">
@@ -71,6 +18,13 @@
                         <div class="btn-toolbar-item input-with-icon">
                             <input type="text" id="search" class="form-control input-block" placeholder="Search Trades">
                             <span class="icon icon-magnifying-glass"></span>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" onclick="askNotificationPermission()" >
+                                <span class="icon icon-notification"></span>
+                            </button>
                         </div>
                     </div>
                     <div class="flextable-item">
@@ -128,9 +82,7 @@
                             <label for="notificationType">Notification Type</label>
                             <select class="form-control" id="notificationType" aria-label="Notification Type">
                                 <option value="price" selected>Price</option>
-                                <option value="gain">Profit</option>
-                                <option value="loss">Loss</option>
-                                <option value="gain">Total Profit and Loss</option>
+                                <option value="total">Profit and Loss</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -183,9 +135,7 @@
                             <label for="editNotificationType">Notification Type</label>
                             <select class="form-control" id="editNotificationType" aria-label="Notification Type">
                                 <option value="price" selected>Price</option>
-                                <option value="gain">Profit</option>
-                                <option value="loss">Loss</option>
-                                <option value="total">Total Profit and Loss</option>
+                                <option value="total">Profit and Loss</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -245,14 +195,15 @@
         </div>
     </div>
 
-    <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/tether.min.js"></script>
-    <script src="../assets/js/chart.js"></script>
-    <script src="../assets/js/tablesorter.min.js"></script>
-    <script src="../assets/js/toolkit.js"></script>
-    <script src="../assets/js/application.js"></script>
-    <script src="../assets/js/typeahead.js"></script>
-    <script src="../assets/js/pnotify.min.js"></script>
-    <script src="../assets/js/custom/notification.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/tether.min.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/tablesorter.min.js"></script>
+    <script src="/js/toolkit.js"></script>
+    <script src="/js/application.js"></script>
+    <script src="/js/typeahead.js"></script>
+    <script src="/js/pnotify.min.js"></script>
+    <script src="/js/custom/notification.js"></script>
+    <script src="/js/custom/notification.show.js"></script>
     </body>
 </html>

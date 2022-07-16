@@ -41,8 +41,12 @@ for(let i = 0; i < trades.length; i++){
             <td>$${tradeDetails.cost}</td>
             <td>${new Date(tradeDetails.tradeDate).toLocaleDateString()}</td>
             <td>
-                <button type="button" class="btn btn-outline-primary" onclick='editTradeOpenModal(${tradeDetails.id})'>
-                <span class="icon icon-edit"></span>
+                <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-primary" 
+                    onclick='editTradeOpenModal(${tradeDetails.id})'
+                >
+                    <span class="icon icon-edit"></span>
                 </button>
             </td>
             </tr>
