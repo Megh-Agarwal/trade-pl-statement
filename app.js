@@ -1,4 +1,4 @@
-const port = 8080;
+const PORT = process.env.PORT || 5000;
 
 const path = require('path');
 const express = require('express');
@@ -45,6 +45,6 @@ handlebars.registerPartials(partialsPath);
 
 webPush.setVapidDetails('mailto:agarwalmegh2004@gmail.com', publicVapidKey, privateVapidKey);
 
-app.listen(port, () => {
-    console.log('Server is running on port ' + port);
+app.listen(PORT, () => {
+    console.log('Server is running on port ' + PORT);
 })
