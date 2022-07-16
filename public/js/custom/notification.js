@@ -2,7 +2,10 @@ function askNotificationPermission() {
     // If the user agreed to get notified
     // Let's try to send ten notifications
     if (window.Notification && Notification.permission === "granted") {
-        console.log("granted notification");
+        PNotify.success({
+            title: "Permissions Granted",
+            text: "You have granted the permission to send notifications."
+        })
     }
 
     // If the user hasn't told if they want to be notified or not
@@ -12,12 +15,25 @@ function askNotificationPermission() {
         Notification.requestPermission(function (status) {
             // If the user said okay
             if (status === "granted") {
-                console.log("granted user notification");
+                PNotify.success({
+                    title: "Permissions Granted",
+                    text: "You have granted the permission to send notifications."
+                })
             }
 
             // Otherwise, we can fallback to a regular modal alert
             else {
-                alert("Hi!");
+                if ('Notification' in window) {
+                    PNotify.error({
+                        title: "An error occured",
+                        text: "You have not allowed the app to send you notifications."
+                    })
+                } else {
+                    PNotify.error({
+                        title: "An error occured",
+                        text: "Your browser does not support notifications."
+                    })
+                }
             }
         });
     }
@@ -25,9 +41,40 @@ function askNotificationPermission() {
     // If the user refuses to get notified
     else {
         // We can fallback to a regular modal alert
-        alert("Hi!");
+        if ('Notification' in window) {
+            PNotify.error({
+                title: "An error occured",
+                text: "You have not allowed the app to send you notifications."
+            })
+        } else {
+            PNotify.error({
+                title: "An error occured",
+                text: "Your browser does not support notifications."
+            })
+        }
     }
 }
+
+function setInputDate(_id){
+    var _dat = document.querySelector(_id);
+    var hoy = new Date(),
+        d = hoy.getDate(),
+        m = hoy.getMonth()+1, 
+        y = hoy.getFullYear(),
+        data;
+
+    if(d < 10){
+        d = "0"+d;
+    };
+    if(m < 10){
+        m = "0"+m;
+    };
+
+    data = y+"-"+m+"-"+d;
+    _dat.value = data;
+};
+
+setInputDate("#notificationExpiry");
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
