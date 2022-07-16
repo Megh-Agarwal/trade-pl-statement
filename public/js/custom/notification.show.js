@@ -80,11 +80,11 @@ function checkForNotifications(subscription){
         let notification = JSON.parse(notifications[i]);
 
         if(notification["status"] == 0){
-            if(!coinWiseNotificationRequests[notification["name"]]){
-                coinWiseNotificationRequests[notification["name"]] = [];
+            if(!coinWiseNotificationRequests[notification["name"].toLowerCase()]){
+                coinWiseNotificationRequests[notification["name"].toLowerCase()] = [];
             }
 
-            coinWiseNotificationRequests[notification["name"]].push(notification);
+            coinWiseNotificationRequests[notification["name"].toLowerCase()].push(notification);
             coinsToFetchLiveData.push(notification["name"].toLowerCase());
         }
     }
@@ -106,101 +106,99 @@ function checkForNotifications(subscription){
             for(let i in updatedPrice){
                 let newPrice = parseFloat(updatedPrice[i]);
 
-                for(let j in coinWiseNotificationRequests){
-                    for(let k in coinWiseNotificationRequests[j]){
-                        let notification = coinWiseNotificationRequests[j][k];
+                for(let j in coinWiseNotificationRequests[i]){
+                    let notification = coinWiseNotificationRequests[i][j];
+
+                    let notificationValue = parseFloat(notification["value"]);
+
+                    let expiryDate = new Date(notification["expiry"]);
+                    let todaysDate = new Date();
+
+                    let sendNotification = false;
+                    let valueToCompare = newPrice;
+
+                    if(notification["status"] == 0){
+                        if(expiryDate >= todaysDate){
+                            if(
+                                notification["type"] == "total"
+                            ) {
+                                let newMv = newPrice * parseFloat(nameToTradeMap[i]["volume"]);
+                                valueToCompare = newMv - parseFloat(nameToTradeMap[i]["cost"]);
+                            }
     
-                        let notificationValue = parseFloat(notification["value"]);
+                            if(
+                                notification["condition"] == "equal" &&
+                                valueToCompare == notificationValue
+                            ){
+                                //send notification
+                                sendNotification = true;
+                            } 
+                            
+                            else if(
+                                notification["condition"] == "more" &&
+                                valueToCompare >= notificationValue
+                            ) {
+                                //send notification
+                                sendNotification = true;
+                            }  
+                            
+                            else if(
+                                notification["condition"] == "less" &&
+                                valueToCompare <= notificationValue
+                            ) {
+                                //send notification
+                                sendNotification = true;
+                            }
+                        } else {
+                            //Update status of notification to 1 because the expiry date has been reached.
     
-                        let expiryDate = new Date(notification["expiry"]);
-                        let todaysDate = new Date();
+                            notification["status"] = 1;
+
+                            coinWiseNotificationRequests[i][parseFloat(j)] = JSON.stringify(notification); 
     
-                        let sendNotification = false;
-                        let valueToCompare = newPrice;
-    
-                        if(notification["status"] == 0){
-                            if(expiryDate >= todaysDate){
-                                console.log("reached");
-                                if(
-                                    notification["type"] == "total"
-                                ) {
-                                    let newMv = newPrice * parseFloat(nameToTradeMap[i]["volume"]);
-                                    valueToCompare = newMv - parseFloat(nameToTradeMap[i]["cost"]);
+                            for(let l in notifications) {
+                                let notiDetails = JSON.parse(notifications[l])
+                                if(notiDetails["id"] == notification["id"]){
+                                    notifications[l] = JSON.stringify(notification);
                                 }
-        
-                                if(
-                                    notification["condition"] == "equal" &&
-                                    valueToCompare == notificationValue
-                                ){
-                                    //send notification
-                                    sendNotification = true;
-                                } 
-                                
-                                else if(
-                                    notification["condition"] == "more" &&
-                                    valueToCompare >= notificationValue
-                                ) {
-                                    //send notification
-                                    sendNotification = true;
-                                }  
-                                
-                                else if(
-                                    notification["condition"] == "less" &&
-                                    valueToCompare <= notificationValue
-                                ) {
-                                    //send notification
-                                    sendNotification = true;
-                                }
-                            } else {
-                                //Update status of notification to 1 because the expiry date has been reached.
-        
+                            }
+                            
+                            localStorage.setItem('notifications', JSON.stringify(notifications));
+                        }
+    
+                        if(sendNotification == true){
+                            if(notification["option"] == "once"){
                                 notification["status"] = 1;
 
-                                coinWiseNotificationRequests[j][parseFloat(k)] = JSON.stringify(notification); 
+                                coinWiseNotificationRequests[i][parseFloat(j)] = JSON.stringify(notification); 
         
                                 for(let l in notifications) {
                                     let notiDetails = JSON.parse(notifications[l])
                                     if(notiDetails["id"] == notification["id"]){
-                                        notifications[l] = JSON.stringify(notification);
+                                        notifications[l] = notification;
                                     }
                                 }
                                 
                                 localStorage.setItem('notifications', JSON.stringify(notifications));
                             }
-        
-                            if(sendNotification == true){
-                                if(notification["option"] == "once"){
-                                    notification["status"] = 1;
-
-                                    coinWiseNotificationRequests[j][parseFloat(k)] = JSON.stringify(notification); 
-            
-                                    for(let l in notifications) {
-                                        let notiDetails = JSON.parse(notifications[l])
-                                        if(notiDetails["id"] == notification["id"]){
-                                            notifications[l] = notification;
-                                        }
+    
+                            const sendNotification = async () => {
+                                await fetch("/notify", {
+                                    method: "POST",
+                                    body: JSON.stringify({
+                                        "subscription": subscription,
+                                        "notification": notification,
+                                        "currentPrice": newPrice
+                                    }),
+                                    headers: {
+                                        "content-type": "application/json"
                                     }
-                                    
-                                    localStorage.setItem('notifications', JSON.stringify(notifications));
-                                }
-        
-                                const sendNotification = async () => {
-                                    await fetch("/notify", {
-                                        method: "POST",
-                                        body: JSON.stringify({
-                                            "subscription": subscription,
-                                            "notification": notification
-                                        }),
-                                        headers: {
-                                            "content-type": "application/json"
-                                        }
-                                    })
-                                }
+                                })
+                            }
 
-                                if(!notisSendForCoins.includes(j)){
-                                    sendNotification();
-                                    notisSendForCoins.push(j);
-                                }
+                            if(!notisSendForCoins.includes(j)){
+                                sendNotification();
+                                notisSendForCoins.push(j);
                             }
                         }
                     }

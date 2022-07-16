@@ -28,6 +28,7 @@ const postNotification = (req, res, next) => {
     const subscription = req.body["subscription"];
 
     const notification = req.body["notification"];
+    const currentPrice = req.body["currentPrice"];
 
     //send status 201 for the request
     res.status(201).json({})
@@ -47,7 +48,7 @@ const postNotification = (req, res, next) => {
     //create paylod: specified the detals of the push notification
     const payload = JSON.stringify({
         title: `Alert for ${notification.combined}!`,
-        body: `${notification.name}'s ${type} has reached ${notification.condition} ${verb} $${notification.value}` 
+        body: `${notification.name}'s (current price is $${currentPrice}) ${type} has reached ${notification.condition} ${verb} $${notification.value}` 
     });
 
     //pass the object into sendNotification fucntion and catch any error
