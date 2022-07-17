@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    {{>head}}
+    <body>
+    <div class="container">
+        <div class="row">
+            {{>header}}
+            <div class="col-md-9 content">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">Notifications Logs</h6>
+                        <h2 class="dashhead-title text-white">Added notifications logs</h2>
+                    </div>
+                </div>
+
+                <div class="flextable table-actions">
+                    <div class="flextable-item flextable-primary">
+                        <div class="btn-toolbar-item input-with-icon">
+                            <input type="text" id="search" class="form-control input-block" placeholder="Search Notifications Logs">
+                            <span class="icon icon-magnifying-glass"></span>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" onclick="exportNotificationLogsTable('notificationLogsTable')" >
+                                <span class="icon icon-export"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table text-white" id="notificationLogsTable">
+                        <thead>
+                            <tr>
+                                <th>Coin</th>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Time Stamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notificationLogsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    <nav>
+                        <ul class="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/tether.min.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/tablesorter.min.js"></script>
+    <script src="/js/toolkit.js"></script>
+    <script src="/js/application.js"></script>
+    <script src="/js/typeahead.js"></script>
+    <script src="/js/pnotify.min.js"></script>
+    <script src="/js/custom/notification.logs.js"></script>
+    <script src="/js/custom/notification.show.js"></script>
+    </body>
+</html>

@@ -22,6 +22,13 @@
                     </div>
                     <div class="flextable-item">
                         <div class="btn-group">
+                            <button type="button" class="btn btn-outline-primary" onclick="exportTable('notificationDetailsTable')" >
+                                <span class="icon icon-export"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flextable-item">
+                        <div class="btn-group">
                             <button type="button" class="btn btn-outline-primary" onclick="askNotificationPermission()" >
                                 <span class="icon icon-notification"></span>
                             </button>
@@ -37,7 +44,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table text-white">
+                    <table class="table text-white" id="notificationDetailsTable">
                         <thead>
                             <tr>
                                 <th>Coin</th>

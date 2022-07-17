@@ -42,7 +42,7 @@ const postNotification = (req, res, next) => {
     let type = "price";
 
     if(notification.type == "total"){
-        type = "total Gain and Loss";
+        type = "total gain and loss";
     }
 
     //create paylod: specified the detals of the push notification
@@ -55,4 +55,10 @@ const postNotification = (req, res, next) => {
     webPush.sendNotification(subscription, payload).catch(err=> console.error(err));
 }
 
-module.exports = { getIndexPage, getTradesPage, getNotificationsPage, getWorkerJs, postNotification };
+const getNotificationLogsPage = (req, res, next) => {
+    res.render('notificationLogs', {
+        title: "$ - Notification Logs"
+    })
+}
+
+module.exports = { getIndexPage, getTradesPage, getNotificationsPage, getWorkerJs, postNotification, getNotificationLogsPage };

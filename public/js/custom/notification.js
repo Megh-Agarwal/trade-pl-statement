@@ -108,6 +108,13 @@ if(localStorage.notifications){
     notifications = JSON.parse(localStorage.notifications);
 }
 
+let idLogsForNotifications = "";
+if(localStorage.idLogsForNotifications){
+    idLogsForNotifications = localStorage.idLogsForNotifications;
+}
+
+idLogsForNotifications = idLogsForNotifications.split(",");
+
 $.ajax({
     type: "GET",
     url: "https://api.coincap.io/v2/assets?limit=2000",
@@ -159,13 +166,51 @@ for(let i = 0; i < notifications.length; i++){
                 </td>
                 <td>
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="logs_${notificationDetails.id}" onchange="">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="logs_${notificationDetails.id}" 
+                            onchange="addNotificationToLogsList(${notificationDetails.id})"
+                            ${idLogsForNotifications.includes(notificationDetails.id.toString()) ? "checked" : "" }
+                        >
                         <label class="form-check-label" for="logs_${notificationDetails.id}"></label>
                     </div>
                 </td>
             </tr>
         `
     );
+}
+
+function addNotificationToLogsList(id) {
+    id = id.toString();
+
+    let logsIsChecked = $('#logs_' + id).is(':checked'); 
+    
+    if(logsIsChecked){
+        if(idLogsForNotifications.includes(id)){
+            return true;
+        } else {
+            idLogsForNotifications.push(id);
+        }
+    } else {
+        if(idLogsForNotifications.includes(id)){
+            let indexOfId = idLogsForNotifications.indexOf(id);
+            idLogsForNotifications.splice(indexOfId, 1);
+        } else {
+            return true;
+        }
+    }
+
+    localStorage.setItem('idLogsForNotifications', idLogsForNotifications.join(','));
+
+    PNotify.success({
+        title: "Success",
+        text: `The notification logs were updated successfully.`
+    })
+
+    setTimeout(function() {
+        location.reload();
+    }, 1000)
 }
 
 function editNotificationOpenModal(id){
@@ -316,6 +361,7 @@ $("#editNotificationButton").on('click', function(e){
             notificationDetails.condition = condition;
             notificationDetails.expiry = expiry;
             notificationDetails.value = value;
+            notificationDetails.status = 0;
         }
         notifications[i] = JSON.stringify(notificationDetails);
     }
