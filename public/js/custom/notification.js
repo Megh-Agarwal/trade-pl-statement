@@ -143,18 +143,24 @@ for(let i = 0; i < notifications.length; i++){
                     <div class="d-grid gap-2 d-md-block">
                         <button 
                             type="button" 
-                            class="btn btn-xs btn-outline-primary" 
+                            class="btn btn-sm btn-outline-primary" 
                             onclick='editNotificationOpenModal(${notificationDetails.id})'
                         >
                             <span class="icon icon-edit"></span>
                         </button>
                         <button 
                             type="button" 
-                            class="btn btn-xs btn-outline-danger" 
+                            class="btn btn-sm btn-outline-danger" 
                             onclick='deleteNotificationOpenModal(${notificationDetails.id})'
                         >
                             <span class="icon icon-cross"></span>
                         </button>    
+                    </div>
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="logs_${notificationDetails.id}" onchange="">
+                        <label class="form-check-label" for="logs_${notificationDetails.id}"></label>
                     </div>
                 </td>
             </tr>
