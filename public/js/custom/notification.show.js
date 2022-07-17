@@ -60,6 +60,28 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
+
+function createNotificationMessage(notification, currentPrice){
+    let verb = "than";
+
+    if(notification.condition == "equal"){
+        verb = "to"
+    }
+
+    let type = "price";
+
+    if(notification.type == "total"){
+        type = "total gain and loss";
+    }
+
+    const notificationMessage = {
+        title: `Alert for ${notification.combined}!`,
+        body: `${notification.name}'s (current price is $${currentPrice}) ${type} has reached ${notification.condition} ${verb} $${notification.value}` 
+    };
+
+    return notificationMessage;
+}
+
 function checkForNotifications(subscription){
     let notifications = [];
     let coinWiseTrades = [];
@@ -67,6 +89,8 @@ function checkForNotifications(subscription){
     let coinsToFetchLiveData = [];
     let coinWiseNotificationRequests = [];
     let notisSendForCoins = [];
+    let idLogsForNotifications = "";
+    let notificationLogs = [];
 
     if(localStorage.notifications){
         notifications = JSON.parse(localStorage.notifications);
@@ -74,6 +98,16 @@ function checkForNotifications(subscription){
 
     if(localStorage.coinWiseTrades){
         coinWiseTrades = JSON.parse(localStorage.coinWiseTrades);
+    }
+
+    if(localStorage.idLogsForNotifications){
+        idLogsForNotifications = localStorage.idLogsForNotifications;
+    }
+
+    idLogsForNotifications = idLogsForNotifications.split(",");
+
+    if(localStorage.notificationLogs){
+        notificationLogs = JSON.parse(localStorage.notificationLogs);
     }
 
     for(let i in notifications){
@@ -175,7 +209,7 @@ function checkForNotifications(subscription){
                                 for(let l in notifications) {
                                     let notiDetails = JSON.parse(notifications[l])
                                     if(notiDetails["id"] == notification["id"]){
-                                        notifications[l] = notification;
+                                        notifications[l] = JSON.stringify(notification);
                                     }
                                 }
                                 
@@ -197,7 +231,21 @@ function checkForNotifications(subscription){
                             }
 
                             if(!notisSendForCoins.includes(j)){
+                                if(idLogsForNotifications.includes(notification["id"].toString())){
+                                    let message = createNotificationMessage(notification, newPrice);
+                                    
+                                    notificationLogs.push(JSON.stringify({
+                                        "notification": notification,
+                                        "currentPrice": newPrice,
+                                        "message": message,
+                                        "timestamp": Date.now()
+                                    }));
+        
+                                    localStorage.setItem('notificationLogs', JSON.stringify(notificationLogs));
+                                }
+    
                                 sendNotification();
+    
                                 notisSendForCoins.push(j);
                             }
                         }

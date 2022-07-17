@@ -9,12 +9,12 @@
                <div class="dashhead">
                   <div class="dashhead-titles">
                      <h6 class="dashhead-subtitle">Dashboards</h6>
-                     <h2 class="dashhead-title">Overview</h2>
+                     <h2 class="dashhead-title text-white">Overview</h2>
                   </div>
                </div>
 
                <div class="hr-divider my-4">
-                  <h3 class="hr-divider-content hr-divider-heading">Quick stats</h3>
+                  <h3 class="hr-divider-content hr-divider-heading text-white">Quick stats</h3>
                </div>
                <div class="row statcards text-xs-center text-md-left" id="quickStatsHeader">
                   <div class="col-6 col-md-6 statcard mb-4"  style="text-align: center;">
@@ -50,8 +50,8 @@
                            >
                         </canvas>
                      </div>
-                     <strong class="text-muted">Investment</strong>
-                     <h4>Cost vs Total</h4>
+                     <strong class="text-white">Investment</strong>
+                     <h4 class="text-white">Cost vs Total</h4>
                   </div>
                   <div class="col-md-6 mb-6 mb-md-6">
                      <div class="w-6 mx-auto">
@@ -62,17 +62,23 @@
                            >
                         </canvas>
                      </div>
-                     <strong class="text-muted">Current Value</strong>
-                     <h4>Market Value vs Total</h4>
+                     <strong class="text-white">Current Value</strong>
+                     <h4 class="text-white">Market Value vs Total</h4>
                   </div>
                </div>
 
                <div class="hr-divider mt-5 mb-3" id="plStatementHr">
-                  <h3 class="hr-divider-content hr-divider-heading">Gain - Loss Statement</h3>
+                  <h3 class="hr-divider-content hr-divider-heading text-white">Gain - Loss Statement</h3>
                </div>
                <div class="row" id="plStatementHeader">
+                  <div class="btn-group">
+                     <button type="button" class="btn btn-outline-primary" onclick="exportTable('tradeDetailsTable')" >
+                        <span class="icon icon-export"></span>
+                     </button>
+                  </div>
                   <div class="table-responsive">
-                     <table class="table">
+                     <br>
+                     <table class="table text-white" id="tradeDetailsTable">
                         <thead>
                            <tr>
                               <th>Coin</th>
@@ -92,7 +98,7 @@
                </div>
 
                <div class="hr-divider mt-5 mb-3" id="plBreakdownHr">
-                  <h3 class="hr-divider-content hr-divider-heading">Gain - Loss Breakdown</h3>
+                  <h3 class="hr-divider-content hr-divider-heading text-white">Gain - Loss Breakdown</h3>
                </div>
                <div class="row" id="plBreakdownHeader">
                   <canvas
@@ -110,13 +116,13 @@
          </div>
       </div>
       <script src="/js/jquery.min.js"></script>
+      <script src="/js/bootstrap.min.js"></script>
       <script src="/js/tether.min.js"></script>
       <script src="/js/chart.js"></script>
       <script src="/js/chart.zoom.js"></script>
       <script src="/js/tablesorter.min.js"></script>
       <script src="/js/toolkit.js"></script>
       <script src="/js/application.js"></script>
-      <script src="/js/notification.js"></script>
       <script src="/js/custom/index.js"></script>
       <script src="/js/custom/notification.show.js"></script>
    </body>
