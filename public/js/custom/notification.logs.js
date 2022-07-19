@@ -1,7 +1,3 @@
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 var notificationTypesList = ['price', 'gain', 'loss', 'total'];
 var notificationOptionsList = ['once', 'everytime'];
 var notificationConditionsList = ['more', 'less', 'equal'];
