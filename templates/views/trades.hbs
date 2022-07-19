@@ -90,11 +90,15 @@
                             <select class="form-control" id="boughtIn" aria-label="Volume bought in">
                                 <option value="usd" selected>USD</option>
                                 <option value="btc">Bitcoin</option>
-                                <option value="eth">Etherium</option>
+                                <option value="eth">Ethereum</option>
                             </select>
                         </div>
+                        <div class="form-group" id="boughtInSupplement" hidden>
+                            <label for="exchangeRate">Exchange rate <span class="boughtInCoinName"></span></label>
+                            <input type="number" class="form-control" id="exchangeRate">
+                        </div>
                         <div class="form-group">
-                            <label for="price">Price</label>
+                            <label for="price">Price <span class="boughtInCoinName"></span></label>
                             <input type="number" class="form-control" id="price">
                         </div>
                         <div class="form-group">
@@ -130,14 +134,26 @@
                             <small id="autocomplete" class="form-text text-muted">Please type in the coin name.</small>
                         </div>
                         <div class="form-group">
-                            <label for="tradeType">Trade Type</label>
+                            <label for="editTradeType">Trade Type</label>
                             <select disabled class="form-control" id="editTradeType" aria-label="Trade Type">
                                 <option value="buy" selected>Buy</option>
                                 <option value="sell">Sell</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="price">Price</label>
+                            <label for="editBoughtIn">Bought in</label>
+                            <select disabled class="form-control" id="editBoughtIn" aria-label="Volume bought in">
+                                <option value="usd" selected>USD</option>
+                                <option value="btc">Bitcoin</option>
+                                <option value="eth">Ethereum</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="editBoughtInSupplement" hidden>
+                            <label for="editExchangeRate">Exchange rate <span class="editBoughtInCoinName"></span></label>
+                            <input type="number" class="form-control" id="editExchangeRate">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPrice">Price <span class="editBoughtInCoinName"></span></label>
                             <input type="number" class="form-control" id="editPrice">
                         </div>
                         <div class="form-group">
@@ -154,6 +170,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editFetchPriceButton" hidden>Fetch price on trade's date</button>
                     <button type="button" class="btn btn-primary" id="editTradeButton">Edit trade</button>
                 </div>
             </div>

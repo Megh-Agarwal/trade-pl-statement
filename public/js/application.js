@@ -1,405 +1,3 @@
-var App = {
-
-  _isWithTooltips: false,
-
-  init: function () {
-    App._tableSorters()
-    App._tooltips()
-    App._navDoc()
-
-    $(window).on('resize', App._tooltips)
-
-    $(document).on('shown.bs.tab', function () {
-      $(document).trigger('redraw.bs.charts')
-    })
-
-    // docs top button
-    if ($('.docs-top').length) {
-      App._backToTopButton()
-      $(window).on('scroll', App._backToTopButton)
-    }
-  },
-
-  _navDoc: function () {
-    // doc nav js
-    var $toc = $('#markdown-toc')
-    var $window = $(window)
-
-    if ($toc[0]) {
-      $('#markdown-toc li').addClass('nav-item')
-      $('#markdown-toc li > a').addClass('nav-link')
-
-      maybeActivateDocNavigation()
-      $window.on('resize', maybeActivateDocNavigation)
-
-      function maybeActivateDocNavigation () {
-        if ($window.width() > 768) {
-          activateDocNavigation()
-        } else {
-          deactivateDocNavigation()
-        }
-      }
-
-      function deactivateDocNavigation() {
-        $window.off('resize.theme.nav')
-        $window.off('scroll.theme.nav')
-        $toc.css({
-          position: '',
-          left: '',
-          top: ''
-        })
-      }
-
-      function activateDocNavigation() {
-
-        var cache = {}
-
-        function updateCache() {
-          cache.containerTop   = $('.docs-content').offset().top - 40
-          cache.containerRight = $('.docs-content').offset().left + $('.docs-content').width() + 45
-          measure()
-        }
-
-        function measure() {
-          var scrollTop = $window.scrollTop()
-          var distance =  Math.max(scrollTop - cache.containerTop, 0)
-
-          if (!distance) {
-            $($toc.find('li a')[1]).addClass('active')
-            return $toc.css({
-              position: '',
-              left: '',
-              top: ''
-            })
-          }
-
-          $toc.css({
-            position: 'fixed',
-            left: cache.containerRight,
-            top: 40
-          })
-        }
-
-        updateCache()
-
-        $(window)
-          .on('resize.theme.nav', updateCache)
-          .on('scroll.theme.nav', measure)
-
-        $('body').scrollspy({
-          target: '#markdown-toc',
-          children: 'li > a'
-        })
-
-        setTimeout(function () {
-          $('body').scrollspy('refresh')
-        }, 1000)
-      }
-    }
-  },
-
-  _backToTopButton: function () {
-    if ($(window).scrollTop() > $(window).height()) {
-      $('.docs-top').fadeIn()
-    } else {
-      $('.docs-top').fadeOut()
-    }
-  },
-
-  _tooltips: function () {
-    if ($(window).width() > 768) {
-      if (App._isWithTooltips) return
-      App._isWithTooltips = true
-      $('[data-toggle="tooltip"]').tooltip()
-
-    } else {
-      if (!App._isWithTooltips) return
-      App._isWithTooltips = false
-      $('[data-toggle="tooltip"]').tooltip('destroy')
-    }
-
-  },
-
-  _tableSorters: function () {
-    $('[data-sort="table"]').tablesorter( {sortList: [[1,0]]} )
-  }
-}
-
-App.init()
-
-// Hello…
-// This is a backport of our old chart-js data api plugin
-// We no longer provide this as a supported plugin because of changes
-// to the chart.js option api. However, for contrived examples (like the ones
-// found in our theme examples, it makes our lives a bit easier.)
-// if you're reading this, we *HIGHLY* recommend you don't use this in
-// production, but rather implement your charts using the chart.js docs-top
-// themselves, directly: www.chartjs.org/docs/
-$(function () {
-
-  var Charts = {
-
-    _HYPHY_REGEX: /-([a-z])/g,
-
-    _cleanAttr: function (obj) {
-      delete obj["chart"]
-      delete obj["datasets"]
-      delete obj["datasetsOptions"]
-      delete obj["labels"]
-      delete obj["options"]
-    },
-
-    doughnut: function (element) {
-      var attrData = $.extend({}, $(element).data())
-
-      var data        = attrData.dataset        ? eval(attrData.dataset) : {}
-      var dataOptions = attrData.datasetOptions ? eval('(' + attrData.datasetOptions + ')') : {}
-      var labels      = attrData.labels         ? eval(attrData.labels) : {}
-      var options     = attrData.options        ? eval('(' + attrData.options + ')') : {}
-
-      Charts._cleanAttr(attrData)
-
-      var datasets = $.extend({
-        data: data,
-        borderWidth: 2,
-        hoverBorderColor: 'transparent'
-      }, dataOptions)
-
-      var options = $.extend({
-        cutoutPercentage: 80,
-        legend: {
-          display: false
-        },
-        animation: {
-          animateRotate: false,
-          duration: 0
-        }
-      }, options)
-
-      new Chart(element.getContext('2d'), {
-          type:"doughnut",
-          data: {
-            datasets: [ datasets ],
-            labels: labels
-          },
-          options: options
-      })
-    },
-
-    'spark-line': function (element) {
-      var attrData = $.extend({}, $(element).data())
-
-      var data           = attrData.dataset        ? eval(attrData.dataset) : []
-      var datasetOptions = attrData.datasetOptions ? eval(attrData.datasetOptions) : []
-      var labels         = attrData.labels         ? eval(attrData.labels) : {}
-      var options     = attrData.options        ? eval('(' + attrData.options + ')') : {}
-
-      var data = {
-        labels   : labels,
-        datasets : data.map(function (set, i) {
-          return $.extend({
-            data: set,
-            fill: true,
-            backgroundColor: 'rgba(255,255,255,.3)',
-            borderColor: '#fff',
-            pointBorderColor: '#fff',
-            lineTension : 0.25,
-            pointRadius: 0
-          }, datasetOptions[i])
-        })
-      }
-
-      Charts._cleanAttr(attrData)
-
-      var options = $.extend({
-        animation: {
-          duration: 0
-        },
-        legend: {
-          display: false
-        },
-        scales: {
-          xAxes: [{
-            display: false
-          }],
-          yAxes: [{
-            display: false
-          }]
-        },
-        tooltips: {
-          enabled: false
-        }
-      }, options)
-
-      new Chart(element.getContext('2d'), {
-          type: 'line',
-          data: data,
-          options: options
-      })
-    },
-
-    line: function (element) {
-      var attrData = $.extend({}, $(element).data())
-
-      var data           = attrData.dataset        ? eval(attrData.dataset) : []
-      var datasetOptions = attrData.datasetOptions ? eval(attrData.datasetOptions) : []
-      var labels         = attrData.labels         ? eval(attrData.labels) : {}
-      var options        = attrData.options        ? eval('(' + attrData.options + ')') : {}
-      var isDark         = !!attrData.dark
-
-      var data = {
-        labels   : labels,
-        datasets : data.map(function (set, i) {
-          return $.extend({
-            data: set,
-            fill: true,
-            backgroundColor: isDark ? 'rgba(28,168,221,.03)' : 'rgba(66,165,245,.2)',
-            borderColor: '#42a5f5',
-            pointBorderColor: '#fff',
-            lineTension : 0.25,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            pointHitRadius: 20
-          }, datasetOptions[i])
-        })
-      }
-
-      Charts._cleanAttr(attrData)
-
-      var options = $.extend({
-        maintainAspectRatio: false,
-        animation: {
-          duration: 0
-        },
-        legend: {
-          display: false
-        },
-        scales: {
-          yAxes: [{
-            gridLines: {
-              color: isDark ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.05)',
-              zeroLineColor: isDark ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.05)',
-              drawBorder: false
-            },
-            ticks: {
-              beginAtZero: false,
-              fixedStepSize: 1000,
-              fontColor: isDark ? '#a2a2a2' : 'rgba(0,0,0,.4)',
-              fontSize: 14
-            }
-          }],
-          xAxes: [{
-            gridLines: {
-              display: false
-            },
-            ticks: {
-              fontColor: isDark ? '#a2a2a2' : 'rgba(0,0,0,.4)',
-              fontSize: 14
-            }
-          }]
-        },
-        tooltips: {
-          enabled: true,
-          bodyFontSize: 14,
-          callbacks: {
-            title: function () { return "" },
-            labelColor: function () {
-              return {
-                backgroundColor: '#42a5f5',
-                borderColor: '#42a5f5'
-              }
-            }
-          }
-        }
-      }, options)
-
-      new Chart(element.getContext('2d'), {
-          type: 'line',
-          data: data,
-          options: options
-      })
-    },
-
-    bar: function (element) {
-      var attrData = $.extend({}, $(element).data())
-
-      var data           = attrData.dataset        ? eval(attrData.dataset) : []
-      var datasetOptions = attrData.datasetOptions ? eval(attrData.datasetOptions) : []
-      var labels         = attrData.labels         ? eval(attrData.labels) : {}
-      var options        = attrData.options        ? eval('(' + attrData.options + ')') : {}
-      var isDark         = !!attrData.dark
-
-      var data = {
-        labels   : labels,
-        datasets : data.map(function (set, i) {
-          return $.extend({
-            data: set,
-            fill: true,
-            backgroundColor: (i % 2 ? '#42a5f5' : '#1bc98e'),
-            borderColor: 'transparent'
-          }, datasetOptions[i])
-        })
-      }
-
-      Charts._cleanAttr(attrData)
-
-      var options = $.extend({
-        maintainAspectRatio: false,
-        animation: {
-          duration: 0
-        },
-        legend: {
-          display: false
-        },
-        scales: {
-          yAxes: [{
-            gridLines: {
-              color: isDark ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.05)',
-              zeroLineColor: isDark ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.05)',
-              drawBorder: false
-            },
-            ticks: {
-              fixedStepSize: 25,
-              fontColor: isDark ? '#a2a2a2' : 'rgba(0,0,0,.4)',
-              fontSize: 14
-            }
-          }],
-          xAxes: [{
-            gridLines: {
-              display: false
-            },
-            ticks: {
-              fontColor: isDark ? '#a2a2a2' : 'rgba(0,0,0,.4)',
-              fontSize: 14
-            }
-          }]
-        },
-        tooltips: {
-          enabled: true,
-          bodyFontSize: 14
-        }
-      }, options)
-
-      new Chart(element.getContext('2d'), {
-          type: 'bar',
-          data: data,
-          options: options
-      })
-    }
-  }
-
-  $(document)
-    .on('redraw.bs.charts', function () {
-      $('[data-chart]').each(function () {
-        if ($(this).is(':visible') && !$(this).hasClass('js-chart-drawn')) {
-          Charts[$(this).attr('data-chart')](this)
-          $(this).addClass('js-chart-drawn')
-        }
-      })
-    })
-    .trigger('redraw.bs.charts')
-});
-
 isset = function(obj) {
   var i, max_i;
   if(obj === undefined) return false;
@@ -452,3 +50,91 @@ function exportTable(table_id, separator = ',') {
   link.click();
   document.body.removeChild(link);
 }
+
+var dynamicColors = function() {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+};
+
+function shadeColor(color, percent) {
+  var R = parseInt(color.substring(1,3),16);
+  var G = parseInt(color.substring(3,5),16);
+  var B = parseInt(color.substring(5,7),16);
+
+  R = parseInt(R * (100 + percent) / 100);
+  G = parseInt(G * (100 + percent) / 100);
+  B = parseInt(B * (100 + percent) / 100);
+
+  R = (R<255)?R:255;  
+  G = (G<255)?G:255;  
+  B = (B<255)?B:255;  
+
+  var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+  var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+  var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+  return "#"+RR+GG+BB;
+}
+
+function customSort(a, b) {
+  return new Date(a.tradeDate).getTime() - new Date(b.tradeDate).getTime();
+}
+
+function getDatesInRange(startDate, endDate) {
+  const date = new Date(startDate.getTime());
+
+  const dates = [];
+
+  while (date < endDate) {
+      dates.push(formatDate(date));
+      date.setDate(date.getDate() + 1);
+  }
+
+  return dates;
+}
+
+function formatDate(date) {
+  var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+  if (month.length < 2) 
+      month = '0' + month;
+  if (day.length < 2) 
+      day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+function convertMonthToWord(strDate, splitPoint, splitKeyword){
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  return months[+strDate.split(splitKeyword)[splitPoint] - 1];
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function setInputDate(_id){
+  var _dat = document.querySelector(_id);
+  var hoy = new Date(),
+      d = hoy.getDate(),
+      m = hoy.getMonth()+1, 
+      y = hoy.getFullYear(),
+      data;
+
+  if(d < 10){
+      d = "0"+d;
+  };
+  if(m < 10){
+      m = "0"+m;
+  };
+
+  data = y+"-"+m+"-"+d;
+  _dat.value = data;
+};
+
+const generateId = () => Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36);
