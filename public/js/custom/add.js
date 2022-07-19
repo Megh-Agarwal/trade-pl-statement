@@ -90,6 +90,18 @@ function editTradeOpenModal(id){
     }
 }
 
+$("#boughtIn").on('change', function (e) {
+    let boughtIn = $("#boughtIn").val();
+
+    if(boughtIn == "btc" || boughtIn == "eth"){
+        $("#fetchPriceButton").removeAttr("hidden");
+    }
+
+    if(boughtIn == "usd"){
+        $("#fetchPriceButton").attr("hidden", true);
+    }
+});
+
 var $rows = $('#tradeDetailsTableBody tr');
 $('#search').keyup(function() {
     var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
