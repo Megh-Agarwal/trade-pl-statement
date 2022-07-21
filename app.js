@@ -1,3 +1,4 @@
+require('dotenv').config()
 const PORT = process.env.PORT || 5000;
 
 const path = require('path');
@@ -8,11 +9,24 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 
 const routes = require('./routes/routes.js');
+const minifier = require('./scripts/minifyFiles.js');
 
 const publicVapidKey = "BI6jIHYbytCsLCBK-D38d6XfcUpoznzdEGAlMVbDu-LeGTjsI4N4T5SEEC9wl-jw6WFKsJ0h9FqYcFFvbGlso7g";
-const privateVapidKey = "90FHdufXbiFkobrzlYgZ6pGAQEpaNk5o9Q_eOMbQJuk";
+const privateVapidKey = process.env.PRIVATE_VAPID_API_KEY;
 
-const publicDirectory = path.join(__dirname, './public');
+var publicDirectory = path.join(__dirname, './public/development/');
+
+if(process.env.MODE == "production"){
+    minifier(
+        path.join(__dirname),
+        'public/development/js',
+        '.js',
+        'public/production/js'
+    );
+    
+    publicDirectory = path.join(__dirname, './public/production/');
+}
+
 const viewsPath = path.join(__dirname, './templates/views/');
 const partialsPath = path.join(__dirname, './templates/partials/');
 
@@ -43,7 +57,7 @@ app.use(routes);
 
 handlebars.registerPartials(partialsPath);
 
-webPush.setVapidDetails('mailto:agarwalmegh2004@gmail.com', publicVapidKey, privateVapidKey);
+webPush.setVapidDetails('mailto:' + process.env.MAIL, publicVapidKey, privateVapidKey);
 
 app.listen(PORT, () => {
     console.log('Server is running on port ' + PORT);
