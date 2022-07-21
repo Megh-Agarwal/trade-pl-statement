@@ -40,9 +40,13 @@ function updateCoinWiseTrades(
 
     let totalSoldQty = 0;
 
+    let countOfTrades = 0;
+
     for(let i = 0; i < tradesToCheck.length; i++){
         let tradeDetails = JSON.parse(tradesToCheck[i]);
         if(tradeDetails.symbol == coinToUpdate){
+            countOfTrades++;
+
             if(tradeDetails.type == "buy") {
                 totalVolume = totalVolume + parseFloat(tradeDetails.volume);
                 totalCost = totalCost + parseFloat(tradeDetails.cost);
@@ -69,7 +73,11 @@ function updateCoinWiseTrades(
         coinWiseTrades[coinToUpdate] = {};
     }
 
-    coinWiseTrades[coinToUpdate] = JSON.stringify(json)
+    if(countOfTrades == 0) {
+        delete coinWiseTrades[coinToUpdate];
+    } else {
+        coinWiseTrades[coinToUpdate] = JSON.stringify(json)
+    }
 
     localStorage.setItem(localStorageVarToUpdate, JSON.stringify(coinWiseTrades));
 }
@@ -81,21 +89,30 @@ for(let i = 0; i < trades.length; i++){
         $("#tradeDetailsTableBody").append(
             `     
                 <tr>
-                <td>${tradeDetails.coin}</td>
-                <td>${capitalizeFirstLetter(tradeDetails.type)}</td>
-                <td>$${tradeDetails.price}</td>
-                <td>${tradeDetails.volume} ${tradeDetails.symbol}</td>
-                <td>$${tradeDetails.cost}</td>
-                <td>${new Date(tradeDetails.tradeDate).toLocaleDateString()}</td>
-                <td>
-                    <button 
-                        type="button" 
-                        class="btn btn-sm btn-outline-primary" 
-                        onclick='editTradeOpenModal("${tradeDetails.id}")'
-                    >
-                        <span class="icon icon-edit"></span>
-                    </button>
-                </td>
+                    <td>${tradeDetails.coin}</td>
+                    <td>${capitalizeFirstLetter(tradeDetails.type)}</td>
+                    <td>$${tradeDetails.price}</td>
+                    <td>${tradeDetails.volume} ${tradeDetails.symbol}</td>
+                    <td>$${tradeDetails.cost}</td>
+                    <td>${new Date(tradeDetails.tradeDate).toLocaleDateString()}</td>
+                    <td>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-outline-primary" 
+                                onclick='editTradeOpenModal("${tradeDetails.id}")'
+                            >
+                                <span class="icon icon-edit"></span>
+                            </button>
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-outline-danger" 
+                                onclick='deleteTradeOpenModal("${tradeDetails.id}")'
+                            >
+                                <span class="icon icon-cross"></span>
+                            </button>
+                        </div>
+                    </td>
                 </tr>
             `
         );
@@ -124,6 +141,17 @@ function editTradeOpenModal(id){
 
             $("#editBoughtIn").trigger('change');
 
+            break;
+        }
+    }
+}
+
+function deleteTradeOpenModal(id){
+    for(let i = 0; i < trades.length; i++){
+        let tradeDetails = JSON.parse(trades[i]);
+        if(tradeDetails.id == id){
+            $("#deleteTradeSpanId").text(id);
+            $("#deleteTradeModal").modal('show');
             break;
         }
     }
@@ -692,3 +720,60 @@ $("#addNewTradeButton").on('click', function(e){
         location.reload();
     }, 1000)
 });
+
+$("#deleteTradeButton").on('click', function(e){
+    for(let i = 0; i < trades.length; i++){
+        let tradeDetails = JSON.parse(trades[i]);
+        if(tradeDetails.id == $("#deleteTradeSpanId").text()){
+
+            if(
+                tradeDetails.relation != "none" && 
+                tradeDetails.relation != "related"
+            ){
+                for(let j = 0; j < trades.length; j++){
+                    let relatedTradeDetails = JSON.parse(trades[j]);
+                    if(relatedTradeDetails.id == tradeDetails.relation){
+                        trades.splice(j, 1);
+
+                        updateCoinWiseTrades(
+                            trades,
+                            'coinWiseTrades',
+                            relatedTradeDetails.symbol,
+                            {
+                                "symbol": relatedTradeDetails.symbol,
+                                "name": coinsSymbols[relatedTradeDetails.symbol]["name"],
+                            }
+                        );
+
+                        break;
+                    }
+                }
+            }
+
+            trades.splice(i, 1);
+
+            updateCoinWiseTrades(
+                trades,
+                'coinWiseTrades',
+                tradeDetails.symbol,
+                {
+                    "symbol": tradeDetails.symbol,
+                    "name": coinsSymbols[tradeDetails.symbol]["name"],
+                }
+            );
+
+            break;
+        }
+    }
+
+    localStorage.setItem('trades', JSON.stringify(trades));
+
+    PNotify.success({
+        title: "Success",
+        text: `The trade was successfully deleted.`
+    })
+
+    setTimeout(function() {
+        location.reload();
+    }, 1000)
+})
