@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "hbs": "^4.2.0",
     "helmet": "^5.1.0",
     "nodemon": "^2.0.19",
+    "uglify-js": "^3.16.2",
     "web-push": "^3.5.0"
   },
   "engines": {
