@@ -138,3 +138,37 @@ function setInputDate(_id){
 };
 
 const generateId = () => Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36);
+
+function clearAllTrades(){
+  if(localStorage.trades){
+    localStorage.removeItem('trades');
+  }
+
+  if(localStorage.coinWiseTrades){
+    localStorage.removeItem('coinWiseTrades');
+  }
+
+  PNotify.success({
+    title: "Success",
+    text: `Successfully cleared all trades and respective holding.`
+  })
+
+  setTimeout(function() {
+      location.reload();
+  }, 1000)
+}
+
+function clearAllNotifications(){
+  if(localStorage.notifications){
+    localStorage.removeItem('notifications');
+  }
+
+  PNotify.success({
+    title: "Success",
+    text: `Successfully cleared all notifications.`
+  })
+
+  setTimeout(function() {
+      location.reload();
+  }, 1000)
+}
