@@ -3,19 +3,28 @@ const webPush = require('web-push');
 
 const getIndexPage = (req, res, next) => {
     res.render('index', {
-        title: "$ - Dashboard"
+        title: "$ - Dashboard",
+        active: {
+            main: true
+        }
     })
 }
 
 const getTradesPage = (req, res, next) => {
     res.render('trades', {
-        title: "$ - Trades"
+        title: "$ - Trades",
+        active: {
+            trades: true
+        }
     })
 }
 
 const getNotificationsPage = (req, res, next) => {
     res.render('notification', {
-        title: "$ - Notifications"
+        title: "$ - Notifications",
+        active: {
+            notifications: true
+        }
     })
 }
 
@@ -57,7 +66,10 @@ const postNotification = (req, res, next) => {
 
 const getNotificationLogsPage = (req, res, next) => {
     res.render('notificationLogs', {
-        title: "$ - Notification Logs"
+        title: "$ - Notification Logs",
+        active: {
+            notificationLogs: true
+        }
     })
 }
 

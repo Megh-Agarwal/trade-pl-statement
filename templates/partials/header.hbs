@@ -12,16 +12,16 @@
             <ul class="nav nav-pills nav-stacked flex-column">
                 <li class="nav-header">Dashboards</li>
                 <li class="nav-item">
-                    <a class="nav-link " href="/">Overview</a>
+                    <a class="nav-link {{#if active.main}}active{{/if}}" href="/">Overview</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="/trades">Trades</a>
+                    <a class="nav-link {{#if active.trades}}active{{/if}}" href="/trades">Trades</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="/notifications">Notifications</a>
+                    <a class="nav-link {{#if active.notifications}}active{{/if}}" href="/notifications">Notifications</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="/notifications/logs">Notifications Logs</a>
+                    <a class="nav-link {{#if active.notificationLogs}}active{{/if}}" href="/notifications/logs">Notifications Logs</a>
                 </li>
             </ul>
             <hr class="visible-xs mt-3">
