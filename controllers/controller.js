@@ -73,4 +73,13 @@ const getNotificationLogsPage = (req, res, next) => {
     })
 }
 
-module.exports = { getIndexPage, getTradesPage, getNotificationsPage, getWorkerJs, postNotification, getNotificationLogsPage };
+const getTechnicalsPage = (req, res, next) => {
+    res.render('technicals', {
+        title: "$ - Technicals",
+        active: {
+            technicals: true
+        }
+    })
+}
+
+module.exports = { getIndexPage, getTradesPage, getNotificationsPage, getWorkerJs, postNotification, getNotificationLogsPage, getTechnicalsPage };
